@@ -8,11 +8,12 @@ public class Bird : MonoBehaviour
     private ForceScript forceScript;
     private Vector3 startPosition;
     private Quaternion startRotation;
-    private float shotTimeout = 10.0f;
+    private float shotTimeout = 4f;
     private float shotTime;
     private bool isShot;
 
     void Start() {
+        GameState.triesCount = 2;
         shotTime = 0.0f;
         isShot = false;
         startPosition = transform.position;
@@ -38,14 +39,22 @@ public class Bird : MonoBehaviour
         }
         if(isShot) { 
             shotTime -= Time.deltaTime;
-            if(shotTime <= 0.0f) { 
-                isShot = false;
-                // Start Position
-                this.transform.position = startPosition;
-                this.transform.rotation = startRotation;
-                // Stop
-                rb2d.linearVelocity = Vector2.zero;
-                rb2d.angularVelocity = 0.0f;
+            if(shotTime <= 0.0f) {
+                GameState.triesCount -= 1;
+                if(GameState.triesCount <= 0) {
+                    GameState.triesCount = 0;
+                    GameState.isLevelFailed = true;
+                    ModalScript.ShowModal("Lose", "Press restart", "Restart");
+                }
+                else {
+                    isShot = false;
+                    // Start Position
+                    this.transform.position = startPosition;
+                    this.transform.rotation = startRotation;
+                    // Stop
+                    rb2d.linearVelocity = Vector2.zero;
+                    rb2d.angularVelocity = 0.0f;
+                }
             }
         }
     }

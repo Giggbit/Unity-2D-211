@@ -23,14 +23,16 @@ public class ModalScript : MonoBehaviour
         titleDefault = titleTMP.text; 
         messageDefault = messageTMP.text;
         playButtonNameDefault = playButtonNameTMP.text;
+        GameState.isLevelFailed = false;
+
         if (content.activeInHierarchy) { 
             Time.timeScale = 0.0f;
-        }
+        } else Time.timeScale = 1.0f;
     }
 
     void Update() {
         if(Input.GetKeyDown(KeyCode.Escape)) {
-            if(content.activeInHierarchy) { 
+            if (content.activeInHierarchy) { 
                 content.SetActive(false);
                 Time.timeScale = 1.0f;
             }
@@ -43,18 +45,18 @@ public class ModalScript : MonoBehaviour
     public void OnResumeButtonClick() {
         Time.timeScale = 1.0f;
         content.SetActive(false);
-        if (GameState.isLevelCompleted) {
+
+        if (GameState.isTimeOut) {
+            SceneManager.LoadScene(GameState.levelIndex);
+        }
+        if (GameState.isLevelFailed) {
+            SceneManager.LoadScene(GameState.levelIndex);
+        }
+        else if (GameState.isLevelCompleted) {
             GameState.levelIndex += 1;
             if(GameState.levelIndex >= SceneManager.sceneCount) {
                 SceneManager.LoadScene(GameState.levelIndex);
-            }
-            else {
-                GameState.levelIndex = 0;
-            }
-        }
-        else {
-            content.SetActive(false);
-            Time.timeScale = 1.0f;
+            } else GameState.levelIndex = 0;
         }
     }
 
@@ -79,7 +81,7 @@ public class ModalScript : MonoBehaviour
         else playButtonNameTMP.text = playButtonNameDefault;
     }
 
-    public static void ShowModal(string title = null, string message = null, string playName = null) { 
+    public static void ShowModal(string title = null, string message = null, string playName = null) {
         instance._Show(title, message, playName);
     } 
 
