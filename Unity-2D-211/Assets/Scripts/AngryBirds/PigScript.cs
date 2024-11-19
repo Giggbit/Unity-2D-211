@@ -11,8 +11,9 @@ public class PigScript : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.name == "Bird") {
-            ModalScript.ShowModal("Paused", "Enemy -1");
+        if (collision.gameObject.CompareTag("PigDestroy")) {
+            GameObject.Destroy(this.gameObject);
+            GameState.needRecalculatePigs = true;
         }
     }
 }

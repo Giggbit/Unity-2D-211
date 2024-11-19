@@ -4,6 +4,6 @@ using UnityEngine.SceneManagement;
 public class RestartScript : MonoBehaviour
 {
     public void RestartScene() {
-        SceneManager.LoadScene("AngryBirds");
+        SceneManager.LoadScene(GameState.levelIndex);
     }
 }

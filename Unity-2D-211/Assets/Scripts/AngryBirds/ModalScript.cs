@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ModalScript : MonoBehaviour
 {
@@ -9,16 +10,20 @@ public class ModalScript : MonoBehaviour
     private TMPro.TextMeshProUGUI titleTMP;
     [SerializeField]
     private TMPro.TextMeshProUGUI messageTMP;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI playButtonNameTMP;
 
     private static ModalScript instance;
     private string titleDefault;
     private string messageDefault;
+    private string playButtonNameDefault;
 
     void Start() {
         instance = this;
         titleDefault = titleTMP.text; 
         messageDefault = messageTMP.text;
-        if(content.activeInHierarchy) { 
+        playButtonNameDefault = playButtonNameTMP.text;
+        if (content.activeInHierarchy) { 
             Time.timeScale = 0.0f;
         }
     }
@@ -36,8 +41,21 @@ public class ModalScript : MonoBehaviour
     }
 
     public void OnResumeButtonClick() {
-        content.SetActive(false);
         Time.timeScale = 1.0f;
+        content.SetActive(false);
+        if (GameState.isLevelCompleted) {
+            GameState.levelIndex += 1;
+            if(GameState.levelIndex >= SceneManager.sceneCount) {
+                SceneManager.LoadScene(GameState.levelIndex);
+            }
+            else {
+                GameState.levelIndex = 0;
+            }
+        }
+        else {
+            content.SetActive(false);
+            Time.timeScale = 1.0f;
+        }
     }
 
     public void OnExitButtonClick() {
@@ -47,7 +65,7 @@ public class ModalScript : MonoBehaviour
         Application.Quit();
     }
 
-    private void _Show(string title = null, string message = null) {
+    private void _Show(string title = null, string message = null, string playName = null) {
         Time.timeScale = 0.0f;
         this.content.SetActive(true);
 
@@ -56,10 +74,13 @@ public class ModalScript : MonoBehaviour
 
         if(message != null) messageTMP.text = message;
         else messageTMP.text = messageDefault;
+
+        if (playName != null) playButtonNameTMP.text = playName;
+        else playButtonNameTMP.text = playButtonNameDefault;
     }
 
-    public static void ShowModal(string title = null, string message = null) { 
-        instance._Show(title, message);
+    public static void ShowModal(string title = null, string message = null, string playName = null) { 
+        instance._Show(title, message, playName);
     } 
 
 }
