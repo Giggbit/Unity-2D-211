@@ -4,6 +4,6 @@ using UnityEngine.SceneManagement;
 public class RestartScript : MonoBehaviour
 {
     public void RestartScene() {
-        SceneManager.LoadScene(GameState.levelIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 0);
     }
 }

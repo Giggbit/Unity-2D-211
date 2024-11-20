@@ -24,7 +24,7 @@ public class ModalScript : MonoBehaviour
         messageDefault = messageTMP.text;
         playButtonNameDefault = playButtonNameTMP.text;
         GameState.isLevelFailed = false;
-
+        
         if (content.activeInHierarchy) { 
             Time.timeScale = 0.0f;
         } else Time.timeScale = 1.0f;
@@ -47,24 +47,25 @@ public class ModalScript : MonoBehaviour
         content.SetActive(false);
 
         if (GameState.isTimeOut) {
-            SceneManager.LoadScene(GameState.levelIndex);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 0);
         }
         if (GameState.isLevelFailed) {
-            SceneManager.LoadScene(GameState.levelIndex);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 0);
         }
         else if (GameState.isLevelCompleted) {
             GameState.levelIndex += 1;
-            if(GameState.levelIndex >= SceneManager.sceneCount) {
+            if (GameState.levelIndex < SceneManager.sceneCountInBuildSettings) {
                 SceneManager.LoadScene(GameState.levelIndex);
-            } else GameState.levelIndex = 0;
+            }
+            else {
+                GameState.levelIndex = 0;
+                SceneManager.LoadScene(GameState.levelIndex);
+            }
         }
     }
 
-    public void OnExitButtonClick() {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
+    public void OnExitToMenuButtonClick() {
+        SceneManager.LoadScene(0);
     }
 
     private void _Show(string title = null, string message = null, string playName = null) {
